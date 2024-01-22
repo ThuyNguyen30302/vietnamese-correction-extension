@@ -16,7 +16,6 @@ class MyTranslationPipeline {
     if (this.instance === null) {
       this.instance = pipeline(this.task, this.model, { progress_callback });
     }
-    console.log(this.instance);
 
     return this.instance;
   }
@@ -43,7 +42,6 @@ self.addEventListener("message", async (event) => {
     //   });
     // },
   });
-
   // Send the output back to the main thread
   self.postMessage({
     // status: "update",

@@ -1,0 +1,12 @@
+{
+    "name": "Vietnamese-correction-extension",
+    "version": "1.0.0",
+    "description": "Vietnamese spelling checker",
+    "manifest_version": 3,
+    "author": "Tiffany",
+    "action":{
+        "default_popup": "index.html",
+        "default_title": "Vietnamese-correction-extensio",
+        "default_icon": "z3367303840201_eb98b7f03396b2927881a0ea94a4160f.jpg"
+    }
+}
