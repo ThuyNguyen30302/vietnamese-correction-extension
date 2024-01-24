@@ -13,8 +13,10 @@ const UserTypings = ({ input, output }) => {
 
   useEffect(() => {
     const incorrectWords = document.querySelectorAll('[data-incorrect-word-content]');
+    console.log('incorrectWords', incorrectWords);
+
     const handleClick = (event) => {
-      console.log(event);
+      console.log('event', event);
       const wordElement = event.target;
       const correctWord = "đúng"; // Thay thế với logic để lấy từ đúng
 

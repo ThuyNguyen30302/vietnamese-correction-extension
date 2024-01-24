@@ -9,8 +9,8 @@ import { Popover } from 'antd';
 function App() {
   // Model loading
   
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
+  const [input, setInput] = useState('Xin chao Viet Nam');
+  const [output, setOutput] = useState('Xin chào Việt Nam');
   const [position, setPosition] = useState(0);
 
 
@@ -22,10 +22,11 @@ function App() {
     const contentEditableElement = document.querySelector('[contentEditable="true"]');
     // Define a debounced input handler.
     const handleInput = _.debounce((e) => {
-      if (window.getSelection()) {
-        setPosition(window.getSelection().anchorOffset)
-        console.log(window.getSelection());
-      }
+      // if (window.getSelection()) {
+      //   setPosition(window.getSelection().anchorOffset)
+      //   console.log(window.getSelection());
+      // }
+      console.log('e.target.textContent', e.target.textContent);
       setInput(e.target.textContent);
       worker.current.postMessage({ text: e.target.textContent });
     }, 1000);
@@ -49,62 +50,62 @@ function App() {
     }
 
     const onMessageReceived =  _.debounce((e) => {
-      const userTypingsElement = (
-        <UserTypings input={input} output={e.data.output[0].generated_text.replace('<s> ', '')} />
-      );
+      // const userTypingsElement = (
+      //   <UserTypings input={input} output={e.data.output[0].generated_text.replace('<s> ', '')} />
+      // );
 
-      const contentEditableElement = document.querySelector('[contentEditable="true"]');
-      if (!contentEditableElement) return; 
-      const pElement = contentEditableElement.querySelector('p');
-      if (!pElement) return; 
+      // const contentEditableElement = document.querySelector('[contentEditable="true"]');
+      // if (!contentEditableElement) return; 
+      // const pElement = contentEditableElement.querySelector('p');
+      // if (!pElement) return; 
 
-      pElement.innerHTML = renderToString(userTypingsElement)
-      const childNodes = pElement.childNodes;
-      let startLenght = 0;
-      let endLenght = childNodes[0].length;
-      let index = 0;
-      let indexItem = 0;
-      _.forEach(childNodes, (item, i) => {
-        if (i !== 0) {
-          switch(item.nodeType) {
-            case Node.ELEMENT_NODE: 
-              startLenght += item.innerHTML.length;
-              endLenght += item.innerHTML.length;
-              break;
-            case Node.TEXT_NODE:  
-              startLenght += item?.length;
-              endLenght += item?.length;
-              break;
-            default:
-              break;
-          }
-        }
+      // pElement.innerHTML = renderToString(userTypingsElement)
+      // const childNodes = pElement.childNodes;
+      // let startLenght = 0;
+      // let endLenght = childNodes[0].length;
+      // let index = 0;
+      // let indexItem = 0;
+      // _.forEach(childNodes, (item, i) => {
+      //   if (i !== 0) {
+      //     switch(item.nodeType) {
+      //       case Node.ELEMENT_NODE: 
+      //         startLenght += item.innerHTML.length;
+      //         endLenght += item.innerHTML.length;
+      //         break;
+      //       case Node.TEXT_NODE:  
+      //         startLenght += item?.length;
+      //         endLenght += item?.length;
+      //         break;
+      //       default:
+      //         break;
+      //     }
+      //   }
 
-        if (position<=endLenght && position>=startLenght) {
-          indexItem = i;
-          index = position - startLenght;
-        }
-      }) 
+      //   if (position<=endLenght && position>=startLenght) {
+      //     indexItem = i;
+      //     index = position - startLenght;
+      //   }
+      // }) 
 
-      const range = document.createRange()
-      switch(childNodes[indexItem].nodeType) {
-        case Node.ELEMENT_NODE: 
-          range.setStart(childNodes[indexItem].firstChild, index)
-          break;
-        case Node.TEXT_NODE:  
-          range.setStart(childNodes[indexItem], index)
-          break;
-        default:
-          break;
-      }
+      // const range = document.createRange()
+      // switch(childNodes[indexItem].nodeType) {
+      //   case Node.ELEMENT_NODE: 
+      //     range.setStart(childNodes[indexItem].firstChild, index)
+      //     break;
+      //   case Node.TEXT_NODE:  
+      //     range.setStart(childNodes[indexItem], index)
+      //     break;
+      //   default:
+      //     break;
+      // }
 
-      range.collapse(true);
-      const selection = window.getSelection(); 
-      // range.setEnd(contentEditableElement.firstChild, wordIndex+4)
-      if (range) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
+      // range.collapse(true);
+      // const selection = window.getSelection(); 
+      // // range.setEnd(contentEditableElement.firstChild, wordIndex+4)
+      // if (range) {
+      //   selection.removeAllRanges();
+      //   selection.addRange(range);
+      // }
 
 
 
@@ -116,7 +117,7 @@ function App() {
       // const paragraphElement = document.createElement('p');
       // ReactDOM.render(userTypingsElement, paragraphElement);
       // contentEditableElement.appendChild(paragraphElement);
-     
+      console.log('e.data.output[0]', e.data.output[0].generated_text.replace('<s> ', ''));
       setOutput(e.data.output[0].generated_text.replace('<s> ', ''));
     }, 1000);
 
@@ -129,6 +130,92 @@ function App() {
 
   }, [input]);
 
+  
+
+  useEffect(() => {
+    const contentEditableElement = document.querySelector('[contentEditable="true"]');
+    // Define a debounced input handler.
+    const handleClick = (e) => {
+      if (!input || !output) return;
+      let positionPointer = {};
+      const selection = window.getSelection(); 
+      if (selection) {
+        positionPointer = setPosition(window.getSelection().anchorOffset)
+        setPosition(positionPointer);
+        console.log('window.getSelection()', window.getSelection());
+      }
+      const userTypingsElement = (
+        <UserTypings input={input} output={output} />
+      );
+
+      const contentEditableElement = document.querySelector('[contentEditable="true"]');
+      
+
+      while (contentEditableElement.firstChild) {
+        contentEditableElement.removeChild(contentEditableElement.firstChild);
+      }
+      
+      const paragraphElement = document.createElement('p');
+      ReactDOM.render(userTypingsElement, paragraphElement);
+      contentEditableElement.appendChild(paragraphElement);
+    //   pElement.innerHTML = renderToString(userTypingsElement)
+    //   const childNodes = pElement.childNodes;
+    //   let startLenght = 0;
+    //   let endLenght = childNodes[0].length;
+    //   let index = 0;
+    //   let indexItem = 0;
+    //   _.forEach(childNodes, (item, i) => {
+    //     if (i !== 0) {
+    //       switch(item.nodeType) {
+    //         case Node.ELEMENT_NODE: 
+    //           startLenght += item.innerHTML.length;
+    //           endLenght += item.innerHTML.length;
+    //           break;
+    //         case Node.TEXT_NODE:  
+    //           startLenght += item?.length;
+    //           endLenght += item?.length;
+    //           break;
+    //         default:
+    //           break;
+    //       }
+    //     }
+
+    //     if (positionPointer<=endLenght && positionPointer>=startLenght) {
+    //       indexItem = i;
+    //       index = positionPointer - startLenght;
+    //     }
+    //   }) 
+
+    //   const range = document.createRange()
+    //   switch(childNodes[indexItem].nodeType) {
+    //     case Node.ELEMENT_NODE: 
+    //       range.setStart(childNodes[indexItem].firstChild, index)
+    //       break;
+    //     case Node.TEXT_NODE:  
+    //       range.setStart(childNodes[indexItem], index)
+    //       break;
+    //     default:
+    //       break;
+    //   }
+
+    //   range.collapse(true);
+    //   // range.setEnd(contentEditableElement.firstChild, wordIndex+4)
+    //   if (range) {
+    //     selection.removeAllRanges();
+    //     selection.addRange(range);
+    //   }
+    //   // console.log('input', input);
+    //   // console.log('output', output);
+    };
+
+    // Attach the input event listener to the contentEditable element.
+    contentEditableElement.addEventListener('click', handleClick);
+
+    // Define a cleanup function for when the component is unmounted.
+    return () => {
+      contentEditableElement.removeEventListener('click', handleClick);
+    };
+  }, [output]);
   // useEffect(() => {
   //   const incorrectWords = document.querySelectorAll('[data-incorrect-word]');
   
